@@ -9,14 +9,13 @@ app=FastAPI(title='Consultas por Streaming',
 description= ' En esta API se podran realizar consultas a los datos de la plataforma Steam teniendo un total de 5 funciones',
 version='1.1.1.1')
 
-steam_games = pd.read_parquet(r'C:\\Users\\licle\\Desktop\\Prep Henry\\Proyecto Integrados n1\\PI MLOps - STEAM\\Datasets\\steam_games.parquet')
-items_def = pd.read_parquet(r'C:\\Users\\licle\\Desktop\\Prep Henry\\Proyecto Integrados n1\\PI MLOps - STEAM\\Datasets\\users_items.parquet')
-reviews_def = pd.read_parquet(r'C:\\Users\\licle\\Desktop\\Prep Henry\\Proyecto Integrados n1\\PI MLOps - STEAM\\Datasets\\user_reviews.parquet')
-datos_cruzados_steam_items = pd.read_parquet(r'C:\\Users\\licle\\Desktop\\Prep Henry\\Proyecto Integrados n1\\PI MLOps - STEAM\\Datasets\\steams_items.parquet')
-datos_cruzados_steam_reviews = pd.read_parquet(r'C:\\Users\\licle\\Desktop\\Prep Henry\\Proyecto Integrados n1\\PI MLOps - STEAM\\Datasets\\steam_reviews.parquet')
+steam_games = pd.read_parquet(r'C:\\Users\\licle\Desktop\\PROYECTO INDIVIDUAL Nº1\\Datasets\\steam_games.parquet')
+items_def = pd.read_parquet(r'C:\\Users\\licle\Desktop\\PROYECTO INDIVIDUAL Nº1\\Datasets\\users_items.parquet')
+reviews_def = pd.read_parquet(r'C:\\Users\\licle\Desktop\\PROYECTO INDIVIDUAL Nº1\\Datasets\\user_reviews.parquet')
 
 @app.get('/PlayTimeGenre')
 async def PlayTimeGenre(genero : str):
+    datos_cruzados_steam_items = pd.merge(steam_games, items_def, left_on='id', right_on='item_id', how='inner')
     genres = datos_cruzados_steam_items.explode('genres') 
     genres['genres'] = genres['genres'].str.replace('&amp;', 'and')
     genres['genres'] = genres['genres'].str.lower().str.replace(r'[^a-zA-Z0-9\s]', '').str.strip()
@@ -33,6 +32,7 @@ async def PlayTimeGenre(genero : str):
 
 @app.get('/UserForGenre')
 async def UserForGenre(genero : str):
+    datos_cruzados_steam_items = pd.merge(steam_games, items_def, left_on='id', right_on='item_id', how='inner')
     genres = datos_cruzados_steam_items.explode('genres')
     genres['genres'] = genres['genres'].str.replace('&amp;', '&')
     genres['genres'] = genres['genres'].str.lower().str.replace(r'[^a-zA-Z0-9\s]', '').str.strip()
@@ -76,6 +76,7 @@ async def UsersNotRecommend(año : int):
 
 @app.get('/sentiment_analysis')
 async def sentiment_analysis(año: int):
+    datos_cruzados_steam_reviews = pd.merge(reviews_def, copia_stream_games, left_on='item_id', right_on='id', how='inner')
     filtro_resenas = datos_cruzados_steam_reviews[datos_cruzados_steam_reviews['release_date'].dt.year == año]
     sentiment_count = filtro_resenas['sentiment_analysis'].value_counts()
     respuesta5 = {

@@ -1,5 +1,7 @@
-fastapi==0.88.0     #Framework
-uvicorn==0.20.0     #Servidor
-pandas==1.5.0       #Libreria pandas para EDA y ETL   
+fastapi==0.111.0    #Framework
+uvicorn==0.29.0    #Servidor
+pandas==2.2.2      #Libreria pandas para EDA y ETL   
 pydantic==1.10.2
 numpy==1.26.1
+fastparquet==2024.2.0
+pyarrow==16.0.0
